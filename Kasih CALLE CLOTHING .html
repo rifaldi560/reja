@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calle Clothing - Kasir Digital</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 380px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .sub-header {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2c3e50;
+        }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #000;
+        }
+
+        #struk {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fffdf5;
+            border: 2px dashed #ccc;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .struk-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .line {
+            border-top: 1px dashed #444;
+            margin: 10px 0;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            color: #d35400;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>CALLE CLOTHING</h2>
+    <div class="sub-header">Premium Collection</div>
+
+    <div class="form-group">
+        <label>Pilih Produk:</label>
+        <select id="produk">
+            <option value="749000">Gamis Calle - Rp 749.000</option>
+            <option value="349000">T-Shirt American Dream - Rp 349.000</option>
+            <option value="429000">Backhit Blue Denim - Rp 429.000</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Ukuran (Size):</label>
+        <select id="size">
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Jumlah Produk:</label>
+        <input type="number" id="jumlah" value="1" min="1" placeholder="Masukkan jumlah">
+    </div>
+
+    <button onclick="prosesTransaksi()">CETAK STRUK</button>
+
+    <div id="struk">
+        <div class="struk-title">STRUK PEMBELIAN</div>
+        <div class="line"></div>
+        
+        <div class="item-row">
+            <span>Produk:</span>
+            <span id="resProduk" style="font-weight: bold;"></span>
+        </div>
+        <div class="item-row">
+            <span>Size:</span>
+            <span id="resSize"></span>
+        </div>
+        <div class="item-row">
+            <span>Harga Satuan:</span>
+            <span>Rp <span id="resHarga"></span></span>
+        </div>
+        <div class="item-row">
+            <span>Jumlah:</span>
+            <span>x <span id="resQty"></span></span>
+        </div>
+
+        <div class="line"></div>
+        <div class="total-row">
+            <span>TOTAL:</span>
+            <span>Rp <span id="resTotal"></span></span>
+        </div>
+        <div class="line"></div>
+
+        <p style="text-align: center; font-size: 0.8rem; margin-top: 15px;">
+            TERIMA KASIH TELAH BERBELANJA DI CALLE!<br>
+            <strong>CALLE CLOTHING - 2026</strong>
+        </p>
+    </div>
+</div>
+
+<script>
+    function prosesTransaksi() {
+        const produkSelect = document.getElementById('produk');
+        const sizeSelect = document.getElementById('size');
+        const inputJumlah = document.getElementById('jumlah').value;
+        const strukDiv = document.getElementById('struk');
+
+        // Validasi jika jumlah kosong atau kurang dari 1
+        if (inputJumlah < 1 || inputJumlah === "") {
+            alert("Harap masukkan jumlah minimal 1!");
+            return;
+        }
+
+        // Ambil Data
+        const namaProdukFull = produkSelect.options[produkSelect.selectedIndex].text;
+        const namaProduk = namaProdukFull.split(' - ')[0]; // Ambil nama saja
+        const hargaSatuan = parseInt(produkSelect.value);
+        const jumlah = parseInt(inputJumlah);
+        const size = sizeSelect.value;
+        
+        // Hitung Total
+        const totalHarga = hargaSatuan * jumlah;
+
+        // Tampilkan ke HTML (dengan format ribuan Rupiah)
+        document.getElementById('resProduk').innerText = namaProduk;
+        document.getElementById('resSize').innerText = size;
+        document.getElementById('resHarga').innerText = hargaSatuan.toLocaleString('id-ID');
+        document.getElementById('resQty').innerText = jumlah;
+        document.getElementById('resTotal').innerText = totalHarga.toLocaleString('id-ID');
+
+        // Munculkan Struk
+        strukDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
